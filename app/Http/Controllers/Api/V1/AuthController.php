@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Auth;
 
 class AuthController extends Controller
 {
@@ -16,6 +17,29 @@ class AuthController extends Controller
         $user->save();
 
         $token = $user->createToken('Token Name')->accessToken;
-        return $token;
+        return response()->json([
+        	'result'=>1,
+        	'message'=>'success',
+        	'token'=>$token
+        ]);
+    }
+    public function login(Request $req){
+    	$data=$req->only('email','password');
+
+    	if(Auth::attempt($data)){
+    		$user=Auth::user();
+    		$token = $user->createToken('Token Name')->accessToken;
+           
+            return response()->json([
+        	'result'=>1,
+        	'message'=>'success',
+        	'token'=>$token
+        ]);
+    	}else{
+    		return response()->json([
+        	'result'=>0,
+        	'message'=>'fail',
+        ]);
+    	}  
     }
 }
